@@ -10,37 +10,37 @@
  */
 L.Path.include({
 
-	/**
-	 * Applies matrix transformation to SVG
-	 * @param {Array.<Number>?} matrix
-	 */
-	_transform: function(matrix) {
-		if (this._renderer) {
-			if (matrix) {
-				this._renderer.transformPath(this, matrix);
-			} else {
-				// reset transform matrix
-				this._renderer._resetTransformPath(this);
-				this._update();
-			}
-		}
-		return this;
-	},
+  /**
+   * Applies matrix transformation to SVG
+   * @param {Array.<Number>?} matrix
+   */
+  _transform: function(matrix) {
+    if (this._renderer) {
+      if (matrix) {
+        this._renderer.transformPath(this, matrix);
+      } else {
+        // reset transform matrix
+        this._renderer._resetTransformPath(this);
+        this._update();
+      }
+    }
+    return this;
+  },
 
-	/**
-	 * Check if the feature was dragged, that'll supress the click event
-	 * on mouseup. That fixes popups for example
-	 *
-	 * @param  {MouseEvent} e
-	 */
-	_onMouseClick: function(e) {
-		if ((this.dragging && this.dragging.moved()) ||
-			(this._map.dragging && this._map.dragging.moved())) {
-			return;
-		}
+  /**
+   * Check if the feature was dragged, that'll supress the click event
+   * on mouseup. That fixes popups for example
+   *
+   * @param  {MouseEvent} e
+   */
+  _onMouseClick: function(e) {
+    if ((this.dragging && this.dragging.moved()) ||
+      (this._map.dragging && this._map.dragging.moved())) {
+      return;
+    }
 
-		this._fireMouseEvent(e);
-	}
+    this._fireMouseEvent(e);
+  }
 
 });
 var END = {
@@ -405,79 +405,79 @@ L.Path.addInitHook(function() {
 });
 L.SVG.include({
 
-	/**
-	 * Reset transform matrix
-	 */
-	_resetTransformPath: function(layer) {
-		layer._path.setAttributeNS(null, 'transform', '');
-	},
+  /**
+   * Reset transform matrix
+   */
+  _resetTransformPath: function(layer) {
+    layer._path.setAttributeNS(null, 'transform', '');
+  },
 
-	/**
-	 * Applies matrix transformation to SVG
-	 * @param {L.Path}         layer
-	 * @param {Array.<Number>} matrix
-	 */
-	transformPath: function(layer, matrix) {
-		layer._path.setAttributeNS(null, 'transform',
-			'matrix(' + matrix.join(' ') + ')');
-	}
+  /**
+   * Applies matrix transformation to SVG
+   * @param {L.Path}         layer
+   * @param {Array.<Number>} matrix
+   */
+  transformPath: function(layer, matrix) {
+    layer._path.setAttributeNS(null, 'transform',
+      'matrix(' + matrix.join(' ') + ')');
+  }
 
 });
 L.SVG.include(!L.Browser.vml ? {} : {
 
-	/**
-	 * Reset transform matrix
-	 */
-	_resetTransformPath: function(layer) {
-		if (layer._skew) {
-			// super important! workaround for a 'jumping' glitch:
-			// disable transform before removing it
-			layer._skew.on = false;
-			layer._path.removeChild(layer._skew);
-			layer._skew = null;
-		}
-	},
+  /**
+   * Reset transform matrix
+   */
+  _resetTransformPath: function(layer) {
+    if (layer._skew) {
+      // super important! workaround for a 'jumping' glitch:
+      // disable transform before removing it
+      layer._skew.on = false;
+      layer._path.removeChild(layer._skew);
+      layer._skew = null;
+    }
+  },
 
-	/**
-	 * Applies matrix transformation to VML
-	 * @param {L.Path}         layer
-	 * @param {Array.<Number>} matrix
-	 */
-	transformPath: function(layer, matrix) {
-		var skew = layer._skew;
+  /**
+   * Applies matrix transformation to VML
+   * @param {L.Path}         layer
+   * @param {Array.<Number>} matrix
+   */
+  transformPath: function(layer, matrix) {
+    var skew = layer._skew;
 
-		if (!skew) {
-			skew = L.SVG.create('skew');
-			layer._path.appendChild(skew);
-			skew.style.behavior = 'url(#default#VML)';
-			layer._skew = skew;
-		}
+    if (!skew) {
+      skew = L.SVG.create('skew');
+      layer._path.appendChild(skew);
+      skew.style.behavior = 'url(#default#VML)';
+      layer._skew = skew;
+    }
 
-		// handle skew/translate separately, cause it's broken
-		var mt = matrix[0].toFixed(8) + ' ' + matrix[1].toFixed(8) + ' ' +
-			matrix[2].toFixed(8) + ' ' + matrix[3].toFixed(8) + ' 0 0';
-		var offset = Math.floor(matrix[4]).toFixed() + ', ' +
-			Math.floor(matrix[5]).toFixed() + '';
+    // handle skew/translate separately, cause it's broken
+    var mt = matrix[0].toFixed(8) + ' ' + matrix[1].toFixed(8) + ' ' +
+      matrix[2].toFixed(8) + ' ' + matrix[3].toFixed(8) + ' 0 0';
+    var offset = Math.floor(matrix[4]).toFixed() + ', ' +
+      Math.floor(matrix[5]).toFixed() + '';
 
-		var s = this._path.style;
-		var l = parseFloat(s.left);
-		var t = parseFloat(s.top);
-		var w = parseFloat(s.width);
-		var h = parseFloat(s.height);
+    var s = this._path.style;
+    var l = parseFloat(s.left);
+    var t = parseFloat(s.top);
+    var w = parseFloat(s.width);
+    var h = parseFloat(s.height);
 
-		if (isNaN(l))       l = 0;
-		if (isNaN(t))       t = 0;
-		if (isNaN(w) || !w) w = 1;
-		if (isNaN(h) || !h) h = 1;
+    if (isNaN(l))       l = 0;
+    if (isNaN(t))       t = 0;
+    if (isNaN(w) || !w) w = 1;
+    if (isNaN(h) || !h) h = 1;
 
-		var origin = (-l / w - 0.5).toFixed(8) + ' ' + (-t / h - 0.5).toFixed(8);
+    var origin = (-l / w - 0.5).toFixed(8) + ' ' + (-t / h - 0.5).toFixed(8);
 
-		skew.on = 'f';
-		skew.matrix = mt;
-		skew.origin = origin;
-		skew.offset = offset;
-		skew.on = true;
-	}
+    skew.on = 'f';
+    skew.matrix = mt;
+    skew.origin = origin;
+    skew.offset = offset;
+    skew.on = true;
+  }
 
 });
 function TRUE_FN () { return true; }
@@ -619,7 +619,7 @@ L.PathTransform.merge = function() {
       val = obj[key];
 
       if (isObject(val) && isObject(target[key])){
-        target[key] = L.Util.merge(target[key], val);
+        target[key] = L.Util.extend(target[key], val);
       } else {
         target[key] = val;
       }
@@ -901,7 +901,7 @@ L.Handler.PathTransform = L.Handler.extend({
     boundsOptions: {
       weight:    1,
       opacity:   1,
-      dashArray: [3, 3],
+      dashArray: '3, 3',
       fill:      false
     },
 
@@ -1184,8 +1184,10 @@ L.Handler.PathTransform = L.Handler.extend({
     this._path._transform(null);
     this._rect._transform(null);
 
-    this._transformPoints(this._path);
-    this._transformPoints(this._rect);
+    var origin = this._path._latlngs[0];
+
+    this._transformPoints(this._path, null, null, origin);
+    this._transformPoints(this._rect, null, null, origin);
 
     if (this.options.rotation) {
       this._handleLine._transform(null);
@@ -1342,7 +1344,7 @@ L.Handler.PathTransform = L.Handler.extend({
     this._rotationMarker = new RotateHandleClass(handlerPosition,
       this.options.handlerOptions)
       .addTo(this._handlersGroup)
-      .on('mousedown', this._onRotateStart, this);
+      .on('click', this._onRotateStart, this);
 
     this._rotationOrigin = new L.LatLng(
       (topPoint.lat + bottom.lat) / 2,
@@ -1357,14 +1359,7 @@ L.Handler.PathTransform = L.Handler.extend({
    * @return {L.LatLng}
    */
   _getRotationOrigin: function() {
-    var latlngs = this._rect._latlngs[0];
-    var lb = latlngs[0];
-    var rt = latlngs[2];
-
-    return new L.LatLng(
-      (lb.lat + rt.lat) / 2,
-      (lb.lng + rt.lng) / 2
-    );
+    return this._path._latlngs[0];
   },
 
 
@@ -1388,9 +1383,9 @@ L.Handler.PathTransform = L.Handler.extend({
       .on('mouseup',   this._onRotateEnd, this);
 
     this._cachePoints();
-    this._path
+    this._path._map
       .fire('transformstart',   { layer: this._path })
-      .fire('rotatestart', { layer: this._path, rotation: 0 });
+      .fire('rotatestart', { layer: this._handlersGroup, rotation: 0 });
   },
 
 
@@ -1425,7 +1420,7 @@ L.Handler.PathTransform = L.Handler.extend({
       .off('mouseup',   this._onRotateEnd, this);
 
     this._apply();
-    this._path.fire('rotateend', { layer: this._path, rotation: this._angle });
+    this._path._map.fire('rotateend', { layer: this._handlersGroup, rotation: this._angle });
   },
 
 
