@@ -1090,11 +1090,11 @@ L.Handler.PathTransform = L.Handler.extend({
    */
   _applyTransform: function(matrix) {
     this._path._transform(matrix._matrix);
-    this._rect._transform(matrix._matrix);
+    // this._rect._transform(matrix._matrix);
 
-    if (this.options.rotation) {
-      this._handleLine._transform(matrix._matrix);
-    }
+    // if (this.options.rotation) {
+    //   this._handleLine._transform(matrix._matrix);
+    // }
   },
 
 
@@ -1157,7 +1157,7 @@ L.Handler.PathTransform = L.Handler.extend({
   _updateHandlers: function() {
     var handlersGroup = this._handlersGroup;
 
-    this._rectShape = this._rect.toGeoJSON();
+    // this._rectShape = this._rect.toGeoJSON();
 
     if (this._handleLine) {
       this._handlersGroup.removeLayer(this._handleLine);
@@ -1182,17 +1182,17 @@ L.Handler.PathTransform = L.Handler.extend({
    */
   _transformGeometries: function() {
     this._path._transform(null);
-    this._rect._transform(null);
+    // this._rect._transform(null);
 
     var origin = this._path._latlngs[0];
 
     this._transformPoints(this._path, null, null, origin);
-    this._transformPoints(this._rect, null, null, origin);
+    // this._transformPoints(this._rect, null, null, origin);
 
-    if (this.options.rotation) {
-      this._handleLine._transform(null);
-      this._transformPoints(this._handleLine, this._angle, null, this._origin);
-    }
+    // if (this.options.rotation) {
+    //   this._handleLine._transform(null);
+    //   this._transformPoints(this._handleLine, this._angle, null, this._origin);
+    // }
   },
 
 
@@ -1295,8 +1295,8 @@ L.Handler.PathTransform = L.Handler.extend({
     var map = this._map;
     this._handlersGroup = this._handlersGroup ||
                           new L.LayerGroup().addTo(map);
-    this._rect = this._rect ||
-                 this._getBoundingPolygon().addTo(this._handlersGroup);
+    // this._rect = this._rect ||
+    //              this._getBoundingPolygon().addTo(this._handlersGroup);
 
     if (this.options.scaling) {
       this._handlers = [];
@@ -1320,36 +1320,39 @@ L.Handler.PathTransform = L.Handler.extend({
    * Rotation marker and small connectin handle
    */
   _createRotationHandlers: function() {
-    var map     = this._map;
-    var latlngs = this._rect._latlngs[0];
+    // var map     = this._map;
+    // var latlngs = this._rect._latlngs[0];
 
-    var bottom   = new L.LatLng(
-      (latlngs[0].lat + latlngs[3].lat) / 2,
-      (latlngs[0].lng + latlngs[3].lng) / 2);
-    // hehe, top is a reserved word
-    var topPoint = new L.LatLng(
-      (latlngs[1].lat + latlngs[2].lat) / 2,
-      (latlngs[1].lng + latlngs[2].lng) / 2);
+    // var bottom   = new L.LatLng(
+    //   (latlngs[0].lat + latlngs[3].lat) / 2,
+    //   (latlngs[0].lng + latlngs[3].lng) / 2);
+    // // hehe, top is a reserved word
+    // var topPoint = new L.LatLng(
+    //   (latlngs[1].lat + latlngs[2].lat) / 2,
+    //   (latlngs[1].lng + latlngs[2].lng) / 2);
 
-    var handlerPosition = map.layerPointToLatLng(
-      L.PathTransform.pointOnLine(
-        map.latLngToLayerPoint(bottom),
-        map.latLngToLayerPoint(topPoint),
-        this.options.handleLength)
-    );
+    // var handlerPosition = map.layerPointToLatLng(
+    //   L.PathTransform.pointOnLine(
+    //     map.latLngToLayerPoint(bottom),
+    //     map.latLngToLayerPoint(topPoint),
+    //     this.options.handleLength)
+    // );
 
-    this._handleLine = new L.Polyline([topPoint, handlerPosition],
-      this.options.rotateHandleOptions).addTo(this._handlersGroup);
+    // this._handleLine = new L.Polyline([topPoint, handlerPosition],
+    //   this.options.rotateHandleOptions).addTo(this._handlersGroup);
     var RotateHandleClass = this.options.rotateHandleClass;
-    this._rotationMarker = new RotateHandleClass(handlerPosition,
-      this.options.handlerOptions)
+    var handlerPosition = this._path._latlngs[1];
+    this._rotationMarker = new RotateHandleClass(
+      handlerPosition,
+      this.options.handlerOptions
+    )
       .addTo(this._handlersGroup)
       .on('click', this._onRotateStart, this);
 
-    this._rotationOrigin = new L.LatLng(
-      (topPoint.lat + bottom.lat) / 2,
-      (topPoint.lng + bottom.lng) / 2
-    );
+    // this._rotationOrigin = new L.LatLng(
+    //   (topPoint.lat + bottom.lat) / 2,
+    //   (topPoint.lng + bottom.lng) / 2
+    // );
 
     this._handlers.push(this._rotationMarker);
   },
@@ -1381,6 +1384,9 @@ L.Handler.PathTransform = L.Handler.extend({
     this._path._map
       .on('mousemove', this._onRotate,     this)
       .on('mouseup',   this._onRotateEnd, this);
+
+    // this._rotationMarker._map
+    //   .
 
     this._cachePoints();
     this._path._map
