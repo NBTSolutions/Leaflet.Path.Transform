@@ -975,6 +975,13 @@ L.Handler.PathTransform = L.Handler.extend({
     }
   },
 
+  cancel: function() {
+    if (this._path._map) {
+      this._map = this._path._map;
+      this._map.fire('mouseup');
+    }
+  },
+
 
   /**
    * Init interactions and handlers
@@ -1383,10 +1390,7 @@ L.Handler.PathTransform = L.Handler.extend({
     this._angle = 0;
     this._path._map
       .on('mousemove', this._onRotate,     this)
-      .on('mouseup',   this._onRotateEnd, this);
-
-    // this._rotationMarker._map
-    //   .
+      .on('mouseup',   this._onRotateEnd,  this);
 
     this._cachePoints();
     this._path._map
